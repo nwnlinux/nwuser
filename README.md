@@ -1,4 +1,1 @@
-nwuser
-======
-
-NWN Linux Per User Settings
+nwuser.README.txt
