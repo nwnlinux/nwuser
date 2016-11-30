@@ -47,8 +47,6 @@ DIR *opendir(const char *name) {
 		__nwu_initialize(); 
 	} 
 
-	__nwu_possible((char *)name, short_name); 
-
 	__nwu_log(NWU_LOG_OPENDIR, "OPENDIR: %s\n", name); 
 
 	dir_stack = malloc(sizeof(DIRSTACK)); 
@@ -58,27 +56,37 @@ DIR *opendir(const char *name) {
 	dir_stack->elements = NULL; 
 	dir_stack->buffer = NULL; 
 
-	snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_name); 
-	__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking home: %s\n", local_name); 
-
-	if( (dir_local = __nwu_opendir(local_name) ) != NULL ) { 
-		while( (dir_entry = __nwu_readdir64( dir_local )) != NULL ) { 
-			__nwu_log( NWU_DEBUG_OPENDIR, "LOCAL: %s\n", dir_entry->d_name); 
-			dir_stack->num_elements = dir_stack->num_elements + __nwu_push( dir_entry, &dir_stack->elements ); 
+	if ( ! __nwu_possible((char *)name, short_name) ) {
+		if( (dir_local = __nwu_opendir(short_name) ) != NULL ) {
+			while( (dir_entry = __nwu_readdir64( dir_local )) != NULL ) {
+				__nwu_log( NWU_DEBUG_OPENDIR, "LOCAL: %s\n", dir_entry->d_name);
+				dir_stack->num_elements = dir_stack->num_elements + __nwu_push( dir_entry, &dir_stack->elements );
+			}
+			__nwu_closedir(dir_local);
 		}
-		__nwu_closedir(dir_local); 
-	} 
-	__nwu_dump( dir_stack ); 
+	} else {
+		snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_name); 
+		__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking home: %s\n", local_name); 
 
-	snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_name); 
-	__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking base: %s\n", local_name); 
+		if( (dir_local = __nwu_opendir(local_name) ) != NULL ) { 
+			while( (dir_entry = __nwu_readdir64( dir_local )) != NULL ) { 
+				__nwu_log( NWU_DEBUG_OPENDIR, "LOCAL: %s\n", dir_entry->d_name); 
+				dir_stack->num_elements = dir_stack->num_elements + __nwu_push( dir_entry, &dir_stack->elements ); 
+			}
+			__nwu_closedir(dir_local); 
+		} 
+		__nwu_dump( dir_stack ); 
 
-	if( (dir_master = __nwu_opendir(local_name) ) != NULL ) { 
-		while( (dir_entry = __nwu_readdir64( dir_master )) != NULL ) { 
-			__nwu_log(NWU_DEBUG_OPENDIR, "MASTER: %s\n", dir_entry->d_name); 
-			dir_stack->num_elements = dir_stack->num_elements + __nwu_push( dir_entry, &dir_stack->elements ); 
+		snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_name); 
+		__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking base: %s\n", local_name); 
+
+		if( (dir_master = __nwu_opendir(local_name) ) != NULL ) { 
+			while( (dir_entry = __nwu_readdir64( dir_master )) != NULL ) { 
+				__nwu_log(NWU_DEBUG_OPENDIR, "MASTER: %s\n", dir_entry->d_name); 
+				dir_stack->num_elements = dir_stack->num_elements + __nwu_push( dir_entry, &dir_stack->elements ); 
+			}
+			__nwu_closedir(dir_master); 
 		}
-		__nwu_closedir(dir_master); 
 	}
 
 	if( dir_stack->num_elements == 0 ) { 
