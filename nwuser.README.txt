@@ -136,7 +136,7 @@ you're attempting ot modify the code for other purposes.
 
 Verified against 1.67&1.69b2, and updated for x86_64. 
 
-My thanks to Eyrdan and Skildron for their help
+My thanks to Erydan and Skildron for their help
 getting this to work on x86_64.
 
 On x86_64, you will get various errors out of ld.so
