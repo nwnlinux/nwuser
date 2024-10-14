@@ -41,7 +41,7 @@ gcc, Perl, if building on x86_64, you will need 32bit development libraries.
 
 1) Unpack the tarball in your NWN directory.
 
-2) execute ./nwuser_install.pl
+2) execute ./nwuser/nwuser_install.pl
 
 3) modify your 'nwn' startup script to include the
 following line:
@@ -55,7 +55,7 @@ export LD_PRELOAD=./nwuser.so:./nwuser64.so
 
    If your using nwmovies, the line should look something like so: 
 
-export LD_PRELOAD=./nwmovies.so:./nwnwuser.so
+export LD_PRELOAD=./nwmovies.so:./nwuser.so:./nwuser64.so
 
 4) You may wish to do something similar for the 
    dmclient startup script.
@@ -86,6 +86,17 @@ export LD_PRELOAD=./nwmovies.so:./nwnwuser.so
 ----> Known Issues <-----
 
 None known.
+
+10/14/2024 START NOTES
+
+Code updates to quiet warnings when building on more modern distributions. 
+There are no functionality changes.   
+
+I will caution this has *VERY MINIMAL* testing, please use the 
+v1.0 release, ignore the warnings while building, and submit an issue
+via GitHub if this does not work for you. 
+
+10/14/2024 END NOTES
 
 08/02/2004 START NOTES
 
