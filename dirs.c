@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <libgen.h>
+#include <assert.h>
 
 #include "code.h"
 
@@ -65,7 +66,7 @@ DIR *opendir(const char *name) {
 			__nwu_closedir(dir_local);
 		}
 	} else {
-		snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_name); 
+		assert( snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_name) >= 0 );
 		__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking home: %s\n", local_name); 
 
 		if( (dir_local = __nwu_opendir(local_name) ) != NULL ) { 
@@ -77,7 +78,7 @@ DIR *opendir(const char *name) {
 		} 
 		__nwu_dump( dir_stack ); 
 
-		snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_name); 
+		assert( snprintf(local_name, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_name) >= 0 );
 		__nwu_log( NWU_DEBUG_OPENDIR, "OPENDIR: Checking base: %s\n", local_name); 
 
 		if( (dir_master = __nwu_opendir(local_name) ) != NULL ) { 
@@ -201,7 +202,7 @@ int mkdir(const char *pathname, mode_t mode) {
 
 	__nwu_log(NWU_LOG_MKDIR, "MKDIR: %s - %04o\n", pathname, mode); 
 	if( __nwu_possible((char *)pathname, short_path) ) { 
-		snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path); 
+		assert( snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path) >= 0 );
 		retval = __nwu_mkdir( newpath, mode ); 
 		tmp_errno = errno; 
 		if ( __nwu_exists_master( (char *)short_path ) ) { 
@@ -224,7 +225,7 @@ int rmdir(const char *pathname) {
 
 	__nwu_log(NWU_LOG_RMDIR, "RMDIR: %s\n", pathname); 
 	if( __nwu_possible((char *)pathname, short_path) ) { 
-		snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path); 
+		assert( snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path) >= 0 );
 		return( __nwu_rmdir( newpath ) ); 
 	} 
 	return(__nwu_rmdir( pathname )); 
@@ -242,8 +243,8 @@ int chdir(const char *path) {
 	}
 	__nwu_log(NWU_LOG_CHDIR, "CHDIR: %s\n", path); 
 	if( __nwu_possible((char *)path, short_path) ) { 
-		snprintf(__nwu_workingdir, PATH_MAX, "%s", short_path); 
-		snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path);
+		assert( snprintf(__nwu_workingdir, PATH_MAX, "%s", short_path) >= 0 );
+		assert( snprintf(newpath, PATH_MAX, "%s/%s", __nwu_homedir, short_path) >= 0 );
 		return(0); 
 	} 
 	strcpy(__nwu_workingdir, ""); 

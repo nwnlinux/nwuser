@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <sys/sendfile.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "code.h"
 
@@ -122,7 +123,7 @@ int __nwu_exists_local(char *name) {
 	/* force the leading / to make certain __xstat doesn't try to 
 		look in the "master" area */
 
-	snprintf(path, PATH_MAX, "/%s/%s/%s", __nwu_homedir, __nwu_workingdir, name);
+	assert( snprintf(path, PATH_MAX, "/%s/%s/%s", __nwu_homedir, __nwu_workingdir, name) >= 0 );
 	if( __nwu_xstat( _STAT_VER, path, &stat_buf ) == 0 ) { 
 		return(1); 
 	} 
@@ -133,7 +134,7 @@ int __nwu_exists_master(char *name) {
 	struct stat stat_buf; 
 	char path[PATH_MAX]; 
 
-	snprintf(path, PATH_MAX, "/%s/%s/%s", __nwu_basedir, __nwu_workingdir, name);
+	assert( snprintf(path, PATH_MAX, "/%s/%s/%s", __nwu_basedir, __nwu_workingdir, name) >= 0 );
 	if( __nwu_xstat( _STAT_VER, path, &stat_buf ) == 0 ) { 
 		return(1); 
 	} 
@@ -153,14 +154,14 @@ void __nwu_copy(char *path) {
 
 	dirp = strdup(path); 
 	dname = dirname(dirp);
-	snprintf(dpath, PATH_MAX, "%s/%s", __nwu_homedir, dname); 
+	assert( snprintf(dpath, PATH_MAX, "%s/%s", __nwu_homedir, dname) >= 0 );
 	if( __nwu_mkdirp( dpath, 0777 ) != 0  && errno != EEXIST ) { 
 		return; 
 	} 
 	free(dirp); 
 
 	if( !__nwu_exists_local(path) && __nwu_exists_master(path) ) { 
-		snprintf(dpath, PATH_MAX, "%s/%s", __nwu_homedir, path); 
+		assert( snprintf(dpath, PATH_MAX, "%s/%s", __nwu_homedir, path) >= 0 );
 		input = __nwu_open64( path, O_RDONLY ); 
 		output = __nwu_open64( dpath, O_RDWR|O_CREAT, 0666 ); 
 		if( input < 0 || output < 0 ) { 
@@ -188,7 +189,7 @@ void __nwu_log(int level, char *fmt, ...) {
 			logging = 1; 
 
 			if( strlen(log_location) == 0 ) { 
-				sprintf(log_location, "%s/nwuser.log", __nwu_homedir); 
+				assert( snprintf(log_location, PATH_MAX, "%s/nwuser.log", __nwu_homedir) >= 0 );
 			} 
 
 			if( level & __nwu_loglevel ) {

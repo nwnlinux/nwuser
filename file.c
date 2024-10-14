@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "code.h"
 
@@ -43,10 +44,10 @@ int __xstat(int ver, const char *file_name, struct stat *buf) {
 
 	if( __nwu_possible((char *)file_name, short_path) ) { 
 		if( __nwu_exists_local((char *)short_path) ) { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_xstat(ver, path, buf) ); 
 		} else { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_xstat(ver, path, buf) ); 
 		}
 	} 
@@ -64,10 +65,10 @@ int __xstat64(int ver, const char *file_name, struct stat64 *buf) {
 
 	if( __nwu_possible((char *)file_name, short_path) ) { 
 		if( __nwu_exists_local((char *)short_path) ) { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_xstat64(ver, path, buf) ); 
 		} else { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_xstat64(ver, path, buf) ); 
 		}
 	} 
@@ -85,10 +86,10 @@ int __lxstat(int ver, const char *file_name, struct stat *buf) {
 
 	if( __nwu_possible((char *)file_name, short_path) ) { 
 		if( __nwu_exists_local((char *)short_path) ) { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_lxstat(ver, path, buf) ); 
 		} else { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_lxstat(ver, path, buf) ); 
 		}
 	} 
@@ -106,10 +107,10 @@ int __lxstat64(int ver, const char *file_name, struct stat64 *buf) {
 
 	if( __nwu_possible((char *)file_name, short_path) ) { 
 		if( __nwu_exists_local((char *)short_path) ) { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_lxstat64(ver, path, buf) ); 
 		} else { 
-			snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+			assert( snprintf(path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 			return( __nwu_lxstat64(ver, path, buf) ); 
 		}
 	} 
@@ -147,10 +148,10 @@ int open64(const char *path, int flags, ... ) {
 		__nwu_copy((char *)short_path); 
 	} 
 	if( write_mode || __nwu_exists_local((char *)short_path) ) { 
-		snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+		assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		return( __nwu_open64( final_path, flags, mode ) ) ; 
 	} 
-	snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+	assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 	return( __nwu_open64(final_path, flags, mode));
 }
 
@@ -186,10 +187,10 @@ int open(const char *path, int flags, ... ) {
 		__nwu_copy((char *)short_path); 
 	} 
 	if( write_mode || __nwu_exists_local((char *)short_path) ) { 
-		snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+		assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		return( __nwu_open( final_path, flags, mode ) ) ; 
 	} 
-	snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+	assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 	return( __nwu_open(final_path, flags, mode));
 }
 
@@ -230,14 +231,14 @@ FILE *fopen(const char *path, const char *mode) {
 		__nwu_copy((char *)short_path); 
 	} 
 	if( write_mode || __nwu_exists_local((char *)short_path) ) { 
-		snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+		assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		retval = __nwu_fopen( final_path, mode );
 		if( retval != NULL ) {
 			__nwu_fcache( path, retval );
 		}
 		return(retval);
 	} 
-	snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+	assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 	retval = __nwu_fopen(final_path, mode);
 	if( retval != NULL ) {
 		__nwu_fcache( path, retval );
@@ -282,14 +283,14 @@ FILE *fopen64(const char *path, const char *mode) {
 		__nwu_copy((char *)short_path); 
 	} 
 	if( write_mode || __nwu_exists_local((char *)short_path) ) { 
-		snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path); 
+		assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		retval = __nwu_fopen64( final_path, mode ); 
 		if( retval != NULL ) { 
 			__nwu_fcache(path, retval); 
 		} 
 		return( retval ); 
 	} 
-	snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path); 
+	assert( snprintf(final_path, PATH_MAX, "%s/%s/%s", __nwu_basedir, __nwu_workingdir, short_path) >= 0 );
 	retval = __nwu_fopen64(final_path, mode); 
 	if( retval != NULL ) { 
 		__nwu_fcache(path, retval); 
@@ -307,7 +308,7 @@ int unlink(const char *pathname) {
 	}
 
 	if( __nwu_possible((char *)pathname, short_path) ) {
-		snprintf(newpath, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path);
+		assert( snprintf(newpath, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		__nwu_log(NWU_LOG_UNLINK, "UNLINK1: %s\n", newpath); 
 		retval = __nwu_unlink( newpath ); 
 		if( retval < 0 && errno == ENOENT ) { 	/* Fix errno */
@@ -329,7 +330,7 @@ int remove(const char *pathname) {
 	} 
 
 	if( __nwu_possible((char *)pathname, short_path) ) {
-		snprintf(newpath, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path);
+		assert( snprintf(newpath, PATH_MAX, "%s/%s/%s", __nwu_homedir, __nwu_workingdir, short_path) >= 0 );
 		__nwu_log(NWU_LOG_UNLINK, "REMOVE1: %s\n", newpath); 
 		retval = __nwu_remove( newpath ); 
 		if( retval < 0 && errno == ENOENT ) { 	/* Fix errno */
